@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import glob
 
 #メインクラス
 class Main_game():
@@ -12,9 +13,11 @@ class Main_game():
         self.screen = pygame.display.set_mode((self.WIDTH,self.HEIGHT))
         self.font_big = pygame.font.SysFont(None,128)
         self.font_smole = pygame.font.SysFont(None,48)
-        self.limit_time=20
+        self.limit_time=30
         self.scor=0
         self.clock = pygame.time.Clock()
+        self.sushi_list = self.make_sushi_list()
+        self.img_sushi=self.sushi_list[0]
         self.game_loop()
 
     #ゲームの進行を担当するメソッド
@@ -37,7 +40,7 @@ class Main_game():
             self.screen.blit(pr_word,(50,200))
 
             total_time = (pygame.time.get_ticks()-self.start_time)/1000
-            total_time_lb = self.font_big.render(str(total_time),True,(0,0,0))
+            total_time_lb = self.font_smole.render(str(total_time),True,(0,0,0))
             self.screen.blit(total_time_lb,(50,400))
             if(total_time>self.limit_time):
                 self.game_over()
@@ -50,6 +53,12 @@ class Main_game():
             else :
                 count5s_lb = self.font_big.render(str(delta_time),True,(0,0,0))
             self.screen.blit(count5s_lb,(280,10))
+
+            self.screen.blit(self.img_sushi,(720*delta_time/5,300))
+
+            limit_time=int(30-total_time)
+            limit_time_lb = self.font_smole.render('last '+str(limit_time)+" seconds",True,(0,0,0))
+            self.screen.blit(limit_time_lb,(100,100))
 
             pygame.display.update()
 
@@ -69,6 +78,7 @@ class Main_game():
                 print(self.scor)
                 if self.is_empty_word():
                     print("if.self.isempty: "+self.word)
+                    self.img_sushi=self.select_img()
                     self.word=self.select_word()
                     self.finished_time=pygame.time.get_ticks()
 
@@ -85,13 +95,33 @@ class Main_game():
     def select_word(self):
         word = [
             'apple',
-            'orange',
+            'pineapple',
             'pen'
             ]
         leng = len(word)
         return word[random.randint(0,leng-1)]
 
+    def select_img(self):
+        leng = len(self.sushi_list)
+        i = random.randint(0,leng-1)
+        return self.sushi_list[i]
+
+    def make_sushi_list(self):
+        sushi_list = []
+        path_list = glob.glob('sushida/img/*.gif')
+        print(path_list)
+        for path in path_list:
+            sushi_list.append(pygame.image.load(path))
+        print(path_list)
+        return sushi_list
+
     def game_over(self):
         print(self.scor/pygame.time.get_ticks()/1000)
-        sys.exit()
+        self.screen.fill((200,200,200))
+        type_speed = self.scor/30
+        type_speed = round(type_speed,3)
+        speed_lb=self.font_big.render(str(type_speed)+'key/s',True,(0,0,0))
+        self.screen.blit(speed_lb,(10,self.HEIGHT/2))
+        pygame.display.update()
+        pygame.time.delay(1000000)
 test = Main_game()
