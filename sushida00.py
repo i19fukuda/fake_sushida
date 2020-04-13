@@ -49,7 +49,7 @@ class Main_game():
             if(delta_time>3 and delta_time<5) :
                 count5s_lb = self.font_big.render(str(delta_time),True,(255,0,0))
             elif (delta_time>5) :
-                sys.exit()
+                self.game_over()
             else :
                 count5s_lb = self.font_big.render(str(delta_time),True,(0,0,0))
             self.screen.blit(count5s_lb,(280,10))
@@ -75,20 +75,15 @@ class Main_game():
                 self.cut_head_chr()
                 self.scor+=1
                 pygame.display.set_caption("scor= "+str(self.scor))
-                print(self.scor)
                 if self.is_empty_word():
-                    print("if.self.isempty: "+self.word)
                     self.img_sushi=self.select_img()
                     self.word=self.select_word()
                     self.finished_time=pygame.time.get_ticks()
 
     def cut_head_chr(self):
-        print("in cut "+self.word)
         self.word=self.word[1:]
-        print("after "+self.word)
 
     def is_empty_word(self):
-        print("In"+self.word)
         return not self.word
 
     #word[]中の文字列をランダムで返すメソッド
@@ -109,14 +104,11 @@ class Main_game():
     def make_sushi_list(self):
         sushi_list = []
         path_list = glob.glob('sushida/img/*.gif')
-        print(path_list)
         for path in path_list:
             sushi_list.append(pygame.image.load(path))
-        print(path_list)
         return sushi_list
 
     def game_over(self):
-        print(self.scor/pygame.time.get_ticks()/1000)
         self.screen.fill((200,200,200))
         type_speed = self.scor/30
         type_speed = round(type_speed,3)
@@ -124,4 +116,5 @@ class Main_game():
         self.screen.blit(speed_lb,(10,self.HEIGHT/2))
         pygame.display.update()
         pygame.time.delay(1000000)
-test = Main_game()
+if __name__ == "__main__":
+    test_env = Main_game()
