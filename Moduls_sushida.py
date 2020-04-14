@@ -41,5 +41,12 @@ class Button():
                 else:
                     return False
 
+    def is_clickd(self,event):
+        pos = pygame.mouse.get_pos()
+        if(self.rect.collidepoint(pos)):
+            return True
+        else:
+            return False
+
 #最初に出る画面 コースの選択もできる
 #Welcom.wel()  で eazy=0,nomal=1,hard=3 を返す

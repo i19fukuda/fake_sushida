@@ -11,42 +11,6 @@ import pygame
 from pygame.locals import *
 
 
-'''
-class Button():
-    def __init__(self,surface,line_width,width,height):
-        self.SURFACE = surface
-        self.LINE_WIDTH = line_width
-        (self.WIDTH,self.HEIGHT) = (width,height)
-
-
-    def creat_button(self,x,y,co):
-        self.left = x
-        self.top = y
-        self.rect = pygame.Rect((self.left,self.top),(self.WIDTH,self.HEIGHT))
-        pygame.draw.rect(self.SURFACE,co,self.rect,self.LINE_WIDTH)
-
-    #(テキスト、サイズ、色)->fontをスクリーンに配置
-    def set_text(self,text,size,co):
-        font = pygame.font.SysFont(None,size)
-        button_text = font.render(str(text),True,co)
-
-        pos = font.size(text)
-        text_width , text_heght = pos[0] , pos[1]
-        cen = (
-            self.left + self.rect.width / 2 - text_width / 2,
-            self.top + self.rect.height /2 - text_heght / 2
-        )
-        self.SURFACE.blit(button_text,cen)
-
-    def is_selectred(self,events):
-        for event in events:
-            if(event.type == MOUSEBUTTONDOWN):
-                pos = pygame.mouse.get_pos()
-                if(self.rect.collidepoint(pos)):
-                    return True
-                else:
-                    return False
-'''
 #最初に出る画面 コースの選択もできる
 #Welcom.wel()  で eazy=0,nomal=1,hard=3 を返す
 class Welcom():
@@ -74,18 +38,32 @@ class Welcom():
         pygame.display.update()
         while(True):
             events = pygame.event.get()
+            for event in events:
+                if(event.type==MOUSEBUTTONDOWN):
+                    if(select_dif0_button.is_clickd(event)):
+                        return 0
+                    if(select_dif1_button.is_clickd(event)):
+                        return 1
+                    if(select_dif2_button.is_clickd(event)):
+                        return 2
+                if(event.type == QUIT):
+                    pygame.quit()
+                    sys.exit(0)
+                else : self.clock.tick(0)
+'''
             if(select_dif0_button.is_selectred(events)):
                 return 0
             if(select_dif1_button.is_selectred(events)):
                 return 1
             if(select_dif2_button.is_selectred(events)):
                 return 2
+
             for event in events:
                 if(event.type == QUIT):
                     pygame.quit()
                     sys.exit(0)
             else : self.clock.tick(30)
-
+'''
 #メインクラス
 class Main_game():
 
@@ -142,7 +120,7 @@ class Main_game():
             count3_lb = self.font_big.render(str(round(3 - (count3 - count3_start)/1000,3)),True,(255,255,255))
             self.screen.blit(count3_lb,(100,200))
             pygame.display.update()
-            self.clock.tick(30)
+            self.clock.tick(0)
 
         self.start_time = pygame.time.get_ticks()
         self.finished_time = pygame.time.get_ticks()
@@ -154,8 +132,6 @@ class Main_game():
             self.screen.blit(pr_word,(50,200))
 
             self.total_time = (pygame.time.get_ticks() - self.start_time)/1000
-            total_time_lb = self.font_smole.render(str(self.total_time),True,(0,0,0))
-            self.screen.blit(total_time_lb,(50,400))
             if(self.total_time>self.limit_time):
                 break
 
@@ -176,23 +152,25 @@ class Main_game():
 
             pygame.display.update()
 
-            for event in pygame.event.get():
-                self.handle_key_event(event)
-            self.clock.tick(30)
+            self.handle_key_event(pygame.event.get())
+
+            self.clock.tick(20)
 
 
-    def handle_key_event(self,event):
-        if event.type == pygame.QUIT:
-            sys.exit(0)
-        if event.type == pygame.KEYDOWN:
-            if chr(event.key) == self.word[0]:
-                self.cut_head_chr()
-                self.scor+=1
-                pygame.display.set_caption("scor= "+str(self.scor))
-                if self.is_empty_word():
-                    self.img_sushi=self.select_img()
-                    self.word=self.select_word()
-                    self.finished_time=pygame.time.get_ticks()
+    def handle_key_event(self,events):
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit(0)
+            if event.type == pygame.KEYDOWN:
+                if chr(event.key) == self.word[0]:
+                    self.cut_head_chr()
+                    self.scor+=1
+                    pygame.display.set_caption("scor= "+str(self.scor))
+                    if self.is_empty_word():
+                        self.img_sushi=self.select_img()
+                        self.word=self.select_word()
+                        self.finished_time=pygame.time.get_ticks()
 
     def cut_head_chr(self):
         self.word=self.word[1:]
